@@ -60,6 +60,10 @@
 		background: linear-gradient(to bottom right, #2E3192, #1BFFFF);
 		color: #fff;
 	}
+	@media screen and (max-width: 650px){
+		.button{
+			width: 100%
+		}
 	</style>
 
 <div class="header">
@@ -317,7 +321,7 @@ function countdown( elementName, minutes, seconds )
     updateTimer();
 }
 $('.countdown').on("click", function(){
-	countdown( "ten-countdown", 1, 0 );
+	countdown( "ten-countdown", 15, 0 );
 	console.log("countdown");
 });
 </script>
