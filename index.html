@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-<title>PROJECT VIRTUAL INSANITY</title>
+<title>PROJECT VIRTUAL INSANITY — PTW Fix</title>
 <style>
   :root{
     --bg:#5a5c5b;
@@ -15,12 +15,10 @@
     --accent1:#ff7f24;
     --accent2:#ffb347;
     --muted:#9aa3ad;
+    --btn1:#00c6ff;
+    --btn2:#0072ff;
   }
-  h1,h2,h3,h4,h5{
-    font-family: "Michroma", sans-serif!important;
-    font-style: normal;
-    text-transform: uppercase;
-  }
+  h1,h2,h3,h4,h5{font-family: "Michroma", sans-serif!important;text-transform: uppercase}
   body{background:var(--bg);color:#fff;font-family: "Montserrat", sans-serif;margin:0}
   header{padding:18px 20px;text-align:center;background:linear-gradient(90deg, hsla(214, 92%, 47%, 1) 0%, hsla(231, 85%, 24%, 1) 100%);box-shadow:0 2px 8px rgba(0,0,0,0.6)}
   header h1{margin:0;font-weight:600}
@@ -29,7 +27,8 @@
   h2{margin:0 0 12px 0;font-size:1.15rem;border-bottom:2px solid rgba(255,127,36,0.12);padding-bottom:8px}
   .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
   .controls .group{display:flex;gap:10px;align-items:center}
-  button{background: linear-gradient(to right, #00c6ff, #0072ff);border:0;padding:8px 14px;border-radius:8px;color:#ffffff;cursor:pointer;font-weight:600}
+  /* Button gradient */
+  button{background: linear-gradient(90deg,var(--btn1),var(--btn2));border:0;padding:8px 14px;border-radius:8px;color:#ffffff;cursor:pointer;font-weight:600}
   button.ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
   input,select{background:#0f1315;border-radius:8px;padding:8px 10px;border:1px solid rgba(255,255,255,0.03);color:#dfe7ea}
   .muted{color:var(--muted);font-size:0.95rem}
@@ -47,36 +46,12 @@
   .car-meta{font-size:0.9rem;color:var(--muted);margin-top:6px}
   /* Stopwatch/Countdown */
   .timer-display{font-family:monospace;font-size:1.15rem;margin-top:8px}
+  /* Tooltip */
+  .tooltip{position:relative;display:inline-block}
+  .tooltip[data-tooltip]:hover::after{content:attr(data-tooltip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(10,12,14,0.95);color:#fff;padding:6px 8px;border-radius:6px;white-space:nowrap;font-size:0.85rem;box-shadow:0 6px 20px rgba(0,0,0,0.6);z-index:1000}
+  .tooltip[data-tooltip]:hover::before{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border-width:6px;border-style:solid;border-color:rgba(10,12,14,0.95) transparent transparent transparent}
   /* small screens */
-  @media screen and (max-width: 768px){
-    header h1{
-      font-size: 25px;
-    }
-  }
-  @media screen and (max-width: 650px){
-    .calc input{
-      width: 100%;
-    }
-    .calc{
-      flex-direction: column;
-    }
-    .controls .group{
-      flex-direction: column;
-      width: 100%;
-    }
-    button{
-      width: 100%;
-    }
-    .countdown-container,
-    .stopwatch-container{
-      width: 100%;
-    }
-  }
-  @media screen and (max-width: 500px){
-    header h1{
-      font-size: 20px;
-    }
-  }
+  @media screen and (max-width: 768px){header h1{font-size:25px}}@media screen and (max-width:650px){.calc input{width:100%}.calc{flex-direction:column}.controls .group{flex-direction:column;width:100%}button{width:100%}.countdown-container,.stopwatch-container{width:100%}}@media screen and (max-width:500px){header h1{font-size:20px}}
 </style>
 </head>
 <body>
@@ -87,18 +62,26 @@
     <h2>Gran Turismo 7</h2>
     <div class="controls gt7-row">
       <div class="group">
-        <button id="gt7-track-btn">Random Track</button>
-        <button id="gt7-rest-btn">Generate Restrictions</button>
+        <button id="gt7-track-btn" class="tooltip" data-tooltip="Pick a random track from GT7">Random Track</button>
+        <button id="gt7-rest-btn" class="tooltip" data-tooltip="Generate random restrictions (PTW, drivetrain, country)">Generate Restrictions</button>
       </div>
       <div class="muted">&nbsp;</div>
     </div>
 
     <div class="calc" style="margin-top:12px">
-      <input id="ptw" type="number" step="0.01" placeholder="Power-to-Weight (hp/kg)" />
-      <input id="hp" type="number" placeholder="Horsepower (hp)" />
-      <input id="weight" type="number" placeholder="Weight (kg)" />
+      <!-- NOTE: changed id to p2w to match your working function -->
+      <input id="p2w" class="tooltip" type="number" step="0.01" placeholder="Power-to-Weight (hp/kg)" data-tooltip="Leave blank to have calculated from HP and Weight" />
+      <input id="hp" class="tooltip" type="number" placeholder="Horsepower (hp)" data-tooltip="Leave blank to calculate from PTW and Weight" />
+      <input id="weight" class="tooltip" type="number" placeholder="Weight (kg)" data-tooltip="Leave blank to calculate from PTW and HP" />
     </div>
-    <div class="muted" style="margin-top:10px" id="gt7-output">&nbsp;</div>
+
+    <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+      <div class="muted" id="gt7-output">&nbsp;</div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button id="gt7-save-btn" class="tooltip" data-tooltip="Save current GT7 inputs to local storage">Save GT7</button>
+        <button id="gt7-load-btn" class="tooltip" data-tooltip="Load saved GT7 inputs (if any)">Load GT7</button>
+      </div>
+    </div>
   </section>
 
   <!-- GTA V -->
@@ -106,16 +89,14 @@
     <h2>Grand Theft Auto V</h2>
     <div class="controls">
       <div class="group">
-        <button id="gta-minigame-btn">Random Minigame</button>
-        <button id="gta-garage-btn">Random Garage + Slot</button>
-        <button id="gta-startend-btn">Start / End Point</button>
+        <button id="gta-minigame-btn" class="tooltip" data-tooltip="Pick a random GTA minigame">Random Minigame</button>
+        <button id="gta-garage-btn" class="tooltip" data-tooltip="Pick a random garage number and slot">Random Garage + Slot</button>
+        <button id="gta-startend-btn" class="tooltip" data-tooltip="Pick start and end points in the same GTA zone">Start / End Point</button>
       </div>
       <div style="margin-left:auto" class="group">
-        <button id="gta-showcar-db">Show Car Database</button>
+        <button id="gta-showcar-db" class="tooltip" data-tooltip="Toggle the car database">Hide Car Database</button>
       </div>
     </div>
-
-    <!-- Stopwatch & Countdown -->
 
     <div id="gta-random-output" class="muted" style="margin-top:12px">&nbsp;</div>
 
@@ -123,10 +104,10 @@
     <div id="gta-car-db" style="display:block;margin-top:16px">
       <h3 style="margin:0 0 10px 0">Car Database</h3>
       <div class="car-controls">
-        <input id="car-search" placeholder="Search by name..." />
-        <select id="car-class-filter"><option value="">All Classes</option><option>Sports</option><option>Super</option><option>Muscle</option></select>
-        <select id="car-tier-filter"><option value="">All Tiers</option><option>S</option><option>A</option><option>B</option><option>O</option></select>
-        <select id="car-sort">
+        <input id="car-search" placeholder="Search by name..." class="tooltip" data-tooltip="Type to search car names" />
+        <select id="car-class-filter" class="tooltip" data-tooltip="Filter by car class"><option value="">All Classes</option><option>Sports</option><option>Super</option><option>Muscle</option></select>
+        <select id="car-tier-filter" class="tooltip" data-tooltip="Filter by tier"><option value="">All Tiers</option><option>S</option><option>A</option><option>B</option><option>O</option></select>
+        <select id="car-sort" class="tooltip" data-tooltip="Choose sort order">
           <option value="">Sort (select)</option>
           <option value="name-asc">Name A → Z</option>
           <option value="name-desc">Name Z → A</option>
@@ -137,7 +118,9 @@
           <option value="speed-desc">Top Speed High → Low</option>
           <option value="speed-asc">Top Speed Low → High</option>
         </select>
-        <button id="car-refresh">Apply</button>
+        <button id="car-refresh" class="tooltip" data-tooltip="Apply filters & sorting">Apply</button>
+        <button id="car-save-btn" class="tooltip" data-tooltip="Save car filters to local storage">Save Filters</button>
+        <button id="car-load-btn" class="tooltip" data-tooltip="Load saved car filters">Load Filters</button>
       </div>
 
       <div class="car-grid" id="car-grid"></div>
@@ -147,9 +130,9 @@
       <div class="stopwatch-container" style="min-width:220px">
         <div class="muted">Stopwatch</div>
         <div class="controls" style="margin-top:8px">
-          <button id="sw-start">Start</button>
-          <button id="sw-stop">Stop</button>
-          <button id="sw-reset">Reset</button>
+          <button id="sw-start" class="tooltip" data-tooltip="Start the stopwatch">Start</button>
+          <button id="sw-stop" class="tooltip" data-tooltip="Stop/pause the stopwatch">Stop</button>
+          <button id="sw-reset" class="tooltip" data-tooltip="Reset to 00:00:00">Reset</button>
         </div>
         <div class="timer-display" id="stopwatch">00:00:00</div>
       </div>
@@ -157,9 +140,9 @@
       <div class="countdown-container" style="min-width:220px">
         <div class="muted">Countdown (15:00)</div>
         <div class="controls" style="margin-top:8px">
-          <button id="cd-start">Start</button>
-          <button id="cd-stop">Stop</button>
-          <button id="cd-reset">Reset</button>
+          <button id="cd-start" class="tooltip" data-tooltip="Start the 15 minute countdown">Start</button>
+          <button id="cd-stop" class="tooltip" data-tooltip="Stop/pause the countdown">Stop</button>
+          <button id="cd-reset" class="tooltip" data-tooltip="Reset countdown to 15:00">Reset</button>
         </div>
         <div class="timer-display" id="countdown">15:00</div>
       </div>
@@ -170,7 +153,7 @@
   <section id="fh5">
     <h2>Forza Horizon 5</h2>
     <div class="controls">
-      <button id="fh5-startend-btn">Generate Start / End Point</button>
+      <button id="fh5-startend-btn" class="tooltip" data-tooltip="Generate start & end points from the same FH5 map">Generate Start / End Point</button>
     </div>
     <div class="muted" id="fh5-output" style="margin-top:10px">&nbsp;</div>
   </section>
@@ -182,155 +165,94 @@ const gt7Tracks = ["Trial Mountain","Deep Forest Raceway","High Speed Ring","Suz
 const gt7Drive = ["Front Engine","Mid Engine","Rear Engine","FWD","RWD","AWD"];
 const gt7Countries = ["Japan","USA","Germany","Italy","UK","France"];
 
-document.getElementById('gt7-track-btn').addEventListener('click', ()=>{
-  const t = gt7Tracks[Math.floor(Math.random()*gt7Tracks.length)];
-  document.getElementById('gt7-output').textContent = `Random Track: ${t}`;
-});
-
-document.getElementById('gt7-rest-btn').addEventListener('click', ()=>{
-  const ptw = (Math.random()*(0.6-0.2)+0.2).toFixed(2);
-  const d = gt7Drive[Math.floor(Math.random()*gt7Drive.length)];
-  const c = gt7Countries[Math.floor(Math.random()*gt7Countries.length)];
-  document.getElementById('gt7-output').textContent = `Restrictions — P/W: ${ptw}, Drivetrain: ${d}, Country: ${c}`;
-});
-
-const ptwEl = document.getElementById('ptw');
+// elements
+const p2wEl = document.getElementById('p2w');
 const hpEl = document.getElementById('hp');
 const weightEl = document.getElementById('weight');
+const gt7OutputEl = document.getElementById('gt7-output');
 
-function gt7AutoCalc(e){
-  const ptw = parseFloat(ptwEl.value);
+// Random track & restrictions
+document.getElementById('gt7-track-btn').addEventListener('click', ()=>{ const t = gt7Tracks[Math.floor(Math.random()*gt7Tracks.length)]; gt7OutputEl.textContent = `Random Track: ${t}`; });
+
+document.getElementById('gt7-rest-btn').addEventListener('click', ()=>{ const ptw = (Math.random()*(0.6-0.2)+0.2).toFixed(2); const d = gt7Drive[Math.floor(Math.random()*gt7Drive.length)]; const c = gt7Countries[Math.floor(Math.random()*gt7Countries.length)]; gt7OutputEl.textContent = `Restrictions — P/W: ${ptw}, Drivetrain: ${d}, Country: ${c}`; });
+
+// Use your provided recalc logic adapted to plain JS (rounded outputs)
+function recalc(changed){
+  const p2w = parseFloat(p2wEl.value);
   const hp = parseFloat(hpEl.value);
-  const wt = parseFloat(weightEl.value);
+  const weight = parseFloat(weightEl.value);
 
-  // If two values known, calculate the third
-  if(!isNaN(hp) && !isNaN(wt) && (isNaN(ptw) || e && e.target===ptwEl)){
-    ptwEl.value = (hp/wt).toFixed(3);
+  if(changed === 'p2w' && !isNaN(p2w)){
+    if(!isNaN(weight)){
+      hpEl.value = Math.round(p2w * weight);
+    } else if(!isNaN(hp) && p2w !== 0){
+      weightEl.value = Math.round(hp / p2w);
+    }
   }
-  if(!isNaN(ptw) && !isNaN(wt) && (isNaN(hp) || e && e.target===hpEl)){
-    hpEl.value = (ptw*wt).toFixed(1);
+  if(changed === 'hp' && !isNaN(hp)){
+    if(!isNaN(p2w) && p2w !== 0){
+      weightEl.value = Math.round(hp / p2w);
+    }
   }
-  if(!isNaN(ptw) && !isNaN(hp) && (isNaN(wt) || e && e.target===weightEl)){
-    weightEl.value = (hp/ptw).toFixed(1);
+  if(changed === 'weight' && !isNaN(weight)){
+    if(!isNaN(p2w)){
+      hpEl.value = Math.round(p2w * weight);
+    }
   }
 }
-ptwEl.addEventListener('input', gt7AutoCalc);
-hpEl.addEventListener('input', gt7AutoCalc);
-weightEl.addEventListener('input', gt7AutoCalc);
+
+// wire up inputs to call recalc with the source field
+p2wEl.addEventListener('input', ()=>recalc('p2w'));
+hpEl.addEventListener('input', ()=>recalc('hp'));
+weightEl.addEventListener('input', ()=>recalc('weight'));
+
+// GT7 Save / Load (using p2w key)
+document.getElementById('gt7-save-btn').addEventListener('click', ()=>{
+  const cfg = {p2w: p2wEl.value, hp: hpEl.value, weight: weightEl.value, ts: Date.now()};
+  localStorage.setItem('gt7_cfg', JSON.stringify(cfg));
+  gt7OutputEl.textContent = 'GT7 inputs saved.';
+});
+
+document.getElementById('gt7-load-btn').addEventListener('click', ()=>{
+  const raw = localStorage.getItem('gt7_cfg'); if(!raw){ gt7OutputEl.textContent = 'No GT7 save found.'; return; }
+  const cfg = JSON.parse(raw); p2wEl.value = cfg.p2w || ''; hpEl.value = cfg.hp || ''; weightEl.value = cfg.weight || ''; recalc('p2w'); gt7OutputEl.textContent = 'GT7 inputs loaded.';
+});
 
 // ---------------- GTA ----------------
 const gtaMinigames = ["Pistol Deathmatch","Races","Capture","LTS","VIP Work","Street Race"];
-const gtaLocations = {
-  "City": ["Vinewood", "Del Perro", "City Hall", "Mirror Park"],
-  "Desert": ["Sandy Shores", "Grapeseed", "Zancudo"],
-  "Coast": ["Vespucci Beach","La Puerta","Paleto Bay"]
-};
+const gtaLocations = {"City":["Vinewood","Del Perro","City Hall","Mirror Park"],"Desert":["Sandy Shores","Grapeseed","Zancudo"],"Coast":["Vespucci Beach","La Puerta","Paleto Bay"]};
 
 // Random minigame
-document.getElementById('gta-minigame-btn').addEventListener('click', ()=>{
-  const m = gtaMinigames[Math.floor(Math.random()*gtaMinigames.length)];
-  document.getElementById('gta-random-output').textContent = `Minigame: ${m}`;
-});
-
+document.getElementById('gta-minigame-btn').addEventListener('click', ()=>{ const m = gtaMinigames[Math.floor(Math.random()*gtaMinigames.length)]; document.getElementById('gta-random-output').textContent = `Minigame: ${m}`; });
 // Random garage + slot
-document.getElementById('gta-garage-btn').addEventListener('click', ()=>{
-  const garage = Math.floor(Math.random()*30)+1;
-  const slot = Math.floor(Math.random()*30)+1;
-  document.getElementById('gta-random-output').textContent = `Garage: ${garage}, Slot: ${slot}`;
-});
-
-// GTA Start/End (choose zone then two distinct points)
-document.getElementById('gta-startend-btn').addEventListener('click', ()=>{
-  const zones = Object.keys(gtaLocations);
-  const zone = zones[Math.floor(Math.random()*zones.length)];
-  const pts = gtaLocations[zone];
-  let s,e;
-  do{ s = pts[Math.floor(Math.random()*pts.length)]; e = pts[Math.floor(Math.random()*pts.length)]; }while(s===e);
-  document.getElementById('gta-random-output').textContent = `Start: ${s} → End: ${e} (${zone})`;
-});
+document.getElementById('gta-garage-btn').addEventListener('click', ()=>{ const garage = Math.floor(Math.random()*30)+1; const slot = Math.floor(Math.random()*30)+1; document.getElementById('gta-random-output').textContent = `Garage: ${garage}, Slot: ${slot}`; });
+// GTA Start/End in same zone
+document.getElementById('gta-startend-btn').addEventListener('click', ()=>{ const zones = Object.keys(gtaLocations); const zone = zones[Math.floor(Math.random()*zones.length)]; const pts = gtaLocations[zone]; let s,e; do{ s = pts[Math.floor(Math.random()*pts.length)]; e = pts[Math.floor(Math.random()*pts.length)]; }while(s===e); document.getElementById('gta-random-output').textContent = `Start: ${s} → End: ${e} (${zone})`; });
 
 // ---------------- Stopwatch ----------------
-let swInterval=null, swSeconds=0;
-const swDisplay = document.getElementById('stopwatch');
-function formatTime(sec){
-  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
-  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-}
+let swInterval=null, swSeconds=0; const swDisplay = document.getElementById('stopwatch');
+function formatTime(sec){ const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
 
-document.getElementById('sw-start').addEventListener('click', ()=>{
-  if(swInterval) return; // already running
-  swInterval = setInterval(()=>{ swSeconds++; swDisplay.textContent = formatTime(swSeconds); },1000);
-});
+document.getElementById('sw-start').addEventListener('click', ()=>{ if(swInterval) return; swInterval = setInterval(()=>{ swSeconds++; swDisplay.textContent = formatTime(swSeconds); },1000); });
 document.getElementById('sw-stop').addEventListener('click', ()=>{ if(swInterval){ clearInterval(swInterval); swInterval=null; }});
 document.getElementById('sw-reset').addEventListener('click', ()=>{ clearInterval(swInterval); swInterval=null; swSeconds=0; swDisplay.textContent = formatTime(0); });
 
 // ---------------- Countdown (15 minutes) ----------------
-let cdInterval=null, cdSeconds = 15*60;
-const cdDisplay = document.getElementById('countdown');
-function displayCountdown(){
-  const m = Math.floor(cdSeconds/60), s=cdSeconds%60; cdDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-}
-// init
-displayCountdown();
+let cdInterval=null, cdSeconds = 15*60; const cdDisplay = document.getElementById('countdown'); function displayCountdown(){ const m=Math.floor(cdSeconds/60), s=cdSeconds%60; cdDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; } displayCountdown();
 
-document.getElementById('cd-start').addEventListener('click', ()=>{
-  if(cdInterval) return;
-  cdInterval = setInterval(()=>{
-    if(cdSeconds>0){ cdSeconds--; displayCountdown(); } else { clearInterval(cdInterval); cdInterval=null; }
-  },1000);
-});
+document.getElementById('cd-start').addEventListener('click', ()=>{ if(cdInterval) return; cdInterval = setInterval(()=>{ if(cdSeconds>0){ cdSeconds--; displayCountdown(); } else { clearInterval(cdInterval); cdInterval=null; } },1000); });
 document.getElementById('cd-stop').addEventListener('click', ()=>{ if(cdInterval){ clearInterval(cdInterval); cdInterval=null; }});
 document.getElementById('cd-reset').addEventListener('click', ()=>{ clearInterval(cdInterval); cdInterval=null; cdSeconds = 15*60; displayCountdown(); });
 
 // ---------------- Car Database ----------------
-let cars = [
-  {name:"Pariah", carClass:"Sports", tier:"S", topSpeed:136, img:"https://via.placeholder.com/320x180?text=Pariah"},
-  {name:"Itali RSX", carClass:"Super", tier:"S", topSpeed:135, img:"https://via.placeholder.com/320x180?text=Itali+RSX"},
-  {name:"Jester RR", carClass:"Sports", tier:"B", topSpeed:125, img:"https://via.placeholder.com/320x180?text=Jester+RR"},
-  {name:"Comet SR", carClass:"Sports", tier:"B", topSpeed:123, img:"https://via.placeholder.com/320x180?text=Comet+SR"},
-  {name:"Buffalo STX", carClass:"Muscle", tier:"A", topSpeed:126, img:"https://via.placeholder.com/320x180?text=Buffalo+STX"},
-  {name:"Zentorno", carClass:"Super", tier:"A", topSpeed:128, img:"https://via.placeholder.com/320x180?text=Zentorno"}
-];
+let cars = [ {name:"Pariah", carClass:"Sports", tier:"S", topSpeed:136, img:"https://via.placeholder.com/320x180?text=Pariah"}, {name:"Itali RSX", carClass:"Super", tier:"S", topSpeed:135, img:"https://via.placeholder.com/320x180?text=Itali+RSX"}, {name:"Jester RR", carClass:"Sports", tier:"B", topSpeed:125, img:"https://via.placeholder.com/320x180?text=Jester+RR"}, {name:"Comet SR", carClass:"Sports", tier:"B", topSpeed:123, img:"https://via.placeholder.com/320x180?text=Comet+SR"}, {name:"Buffalo STX", carClass:"Muscle", tier:"A", topSpeed:126, img:"https://via.placeholder.com/320x180?text=Buffalo+STX"}, {name:"Zentorno", carClass:"Super", tier:"A", topSpeed:128, img:"https://via.placeholder.com/320x180?text=Zentorno"} ];
 
 const carGrid = document.getElementById('car-grid');
-function renderCars(list){
-  carGrid.innerHTML = '';
-  if(list.length===0){ carGrid.innerHTML = '<div class="muted">No cars match the filters.</div>'; return; }
-  for(const c of list){
-    const el = document.createElement('div'); el.className='car-card';
-    el.innerHTML = `<img src="${c.img}" alt="${c.name}"><div class="car-name">${c.name}</div><div class="car-meta">${c.carClass} · Tier ${c.tier}<br>Top Speed: ${c.topSpeed} mph</div>`;
-    carGrid.appendChild(el);
-  }
-}
+function renderCars(list){ carGrid.innerHTML = ''; if(list.length===0){ carGrid.innerHTML = '<div class="muted">No cars match the filters.</div>'; return; } for(const c of list){ const el = document.createElement('div'); el.className='car-card'; el.innerHTML = `<img src="${c.img}" alt="${c.name}"><div class="car-name">${c.name}</div><div class="car-meta">${c.carClass} · Tier ${c.tier}<br>Top Speed: ${c.topSpeed} mph</div>`; carGrid.appendChild(el); } }
 
-function applyCarFilters(){
-  const search = document.getElementById('car-search').value.trim().toLowerCase();
-  const classFilter = document.getElementById('car-class-filter').value;
-  const tierFilter = document.getElementById('car-tier-filter').value;
-  const sortVal = document.getElementById('car-sort').value;
-
-  let out = cars.filter(c=>{
-    if(search && !c.name.toLowerCase().includes(search)) return false;
-    if(classFilter && c.carClass!==classFilter) return false;
-    if(tierFilter && c.tier!==tierFilter) return false;
-    return true;
-  });
-
-  // Sorting
-  switch(sortVal){
-    case 'name-asc': out.sort((a,b)=>a.name.localeCompare(b.name)); break;
-    case 'name-desc': out.sort((a,b)=>b.name.localeCompare(a.name)); break;
-    case 'tier-asc': out.sort((a,b)=>a.tier.localeCompare(b.tier)); break;
-    case 'tier-desc': out.sort((a,b)=>b.tier.localeCompare(a.tier)); break;
-    case 'class-asc': out.sort((a,b)=>a.carClass.localeCompare(b.carClass)); break;
-    case 'class-desc': out.sort((a,b)=>b.carClass.localeCompare(a.carClass)); break;
-    case 'speed-desc': out.sort((a,b)=>b.topSpeed - a.topSpeed); break;
-    case 'speed-asc': out.sort((a,b)=>a.topSpeed - b.topSpeed); break;
-    default: break;
-  }
-
-  renderCars(out);
-}
+function applyCarFilters(){ const search = document.getElementById('car-search').value.trim().toLowerCase(); const classFilter = document.getElementById('car-class-filter').value; const tierFilter = document.getElementById('car-tier-filter').value; const sortVal = document.getElementById('car-sort').value; let out = cars.filter(c=>{ if(search && !c.name.toLowerCase().includes(search)) return false; if(classFilter && c.carClass!==classFilter) return false; if(tierFilter && c.tier!==tierFilter) return false; return true; });
+  switch(sortVal){ case 'name-asc': out.sort((a,b)=>a.name.localeCompare(b.name)); break; case 'name-desc': out.sort((a,b)=>b.name.localeCompare(a.name)); break; case 'tier-asc': out.sort((a,b)=>a.tier.localeCompare(b.tier)); break; case 'tier-desc': out.sort((a,b)=>b.tier.localeCompare(a.tier)); break; case 'class-asc': out.sort((a,b)=>a.carClass.localeCompare(b.carClass)); break; case 'class-desc': out.sort((a,b)=>b.carClass.localeCompare(a.carClass)); break; case 'speed-desc': out.sort((a,b)=>b.topSpeed - a.topSpeed); break; case 'speed-asc': out.sort((a,b)=>a.topSpeed - b.topSpeed); break; default: break; }
+  renderCars(out); }
 
 // Wire up car controls
 document.getElementById('car-search').addEventListener('input', applyCarFilters);
@@ -339,29 +261,22 @@ document.getElementById('car-tier-filter').addEventListener('change', applyCarFi
 document.getElementById('car-sort').addEventListener('change', applyCarFilters);
 document.getElementById('car-refresh').addEventListener('click', applyCarFilters);
 
+// Car Filters Save/Load
+const carSaveBtn = document.getElementById('car-save-btn');
+const carLoadBtn = document.getElementById('car-load-btn');
+carSaveBtn.addEventListener('click', ()=>{ const state = { search: document.getElementById('car-search').value, classFilter: document.getElementById('car-class-filter').value, tierFilter: document.getElementById('car-tier-filter').value, sortVal: document.getElementById('car-sort').value, ts:Date.now() }; localStorage.setItem('gta_car_filters', JSON.stringify(state)); document.getElementById('gta-random-output').textContent = 'Car filters saved.'; });
+carLoadBtn.addEventListener('click', ()=>{ const raw = localStorage.getItem('gta_car_filters'); if(!raw){ document.getElementById('gta-random-output').textContent = 'No saved car filters found.'; return; } const s = JSON.parse(raw); document.getElementById('car-search').value = s.search || ''; document.getElementById('car-class-filter').value = s.classFilter || ''; document.getElementById('car-tier-filter').value = s.tierFilter || ''; document.getElementById('car-sort').value = s.sortVal || ''; applyCarFilters(); document.getElementById('gta-random-output').textContent = 'Car filters loaded.'; });
+
 // initial render
 applyCarFilters();
 
 // Show/Hide car DB
-const showDbBtn = document.getElementById('gta-showcar-db');
-let dbVisible = true;
-showDbBtn.addEventListener('click', ()=>{
-  dbVisible = !dbVisible; document.getElementById('gta-car-db').style.display = dbVisible? 'block':'none';
-  showDbBtn.textContent = dbVisible? 'Hide Car Database':'Show Car Database';
-});
+const showDbBtn = document.getElementById('gta-showcar-db'); let dbVisible = true; showDbBtn.addEventListener('click', ()=>{ dbVisible = !dbVisible; document.getElementById('gta-car-db').style.display = dbVisible? 'block':'none'; showDbBtn.textContent = dbVisible? 'Hide Car Database':'Show Car Database'; });
 
 // ---------------- FH5 ----------------
-const fh5Zones = {
-  'Main': ['Horizon Festival','Baja Circuit','Guanajuato','La Selva'],
-  'Hot Wheels': ['Hot Wheels Park','Ice Cauldron','Forest Falls'],
-  'Rally': ['Sierra Nueva','Desert Trail','Canyon End']
-};
+const fh5Zones = { 'Main': ['Horizon Festival','Baja Circuit','Guanajuato','La Selva'], 'Hot Wheels': ['Hot Wheels Park','Ice Cauldron','Forest Falls'], 'Rally': ['Sierra Nueva','Desert Trail','Canyon End'] };
 
-document.getElementById('fh5-startend-btn').addEventListener('click', ()=>{
-  const keys = Object.keys(fh5Zones); const map = keys[Math.floor(Math.random()*keys.length)];
-  const pts = fh5Zones[map]; let s,e; do{ s=pts[Math.floor(Math.random()*pts.length)]; e=pts[Math.floor(Math.random()*pts.length)]; }while(s===e);
-  document.getElementById('fh5-output').textContent = `${s} → ${e} (${map})`;
-});
+document.getElementById('fh5-startend-btn').addEventListener('click', ()=>{ const keys = Object.keys(fh5Zones); const map = keys[Math.floor(Math.random()*keys.length)]; const pts = fh5Zones[map]; let s,e; do{ s=pts[Math.floor(Math.random()*pts.length)]; e=pts[Math.floor(Math.random()*pts.length)]; }while(s===e); document.getElementById('fh5-output').textContent = `${s} → ${e} (${map})`; });
 
 </script>
 </body>
