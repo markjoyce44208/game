@@ -37,6 +37,25 @@
   .calc{display:flex;gap:8px;align-items:center}
   .calc input{width:160px}
   /* GTA Car DB */
+  .checklist-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:6px;
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    padding:10px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.05);
+  }
+  .checklist-grid label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:0.95rem;
+  }
+  .checklist-grid input[type=checkbox]{
+    transform:scale(1.2);
+    cursor:pointer;
+  }
   #gta-car-db{margin-top:12px}
   .car-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
   .car-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
@@ -99,6 +118,32 @@
     </div>
 
     <div id="gta-random-output" class="muted" style="margin-top:12px">&nbsp;</div>
+
+    <div id="gta-checklist" style="margin-top:16px">
+  <h3 style="margin:0 0 10px 0">GTA V Progress Checklist</h3>
+  <div class="checklist-grid">
+    <label><input type="checkbox" value="Rank 120"> Rank 120</label>
+    <label><input type="checkbox" value="High end apartment"> High end apartment</label>
+    <label><input type="checkbox" value="Vehicle collection value over $3m"> Vehicle collection value over $3m</label>
+    <label><input type="checkbox" value="Armoured vehicle"> Armoured vehicle</label>
+    <label><input type="checkbox" value="Motorcycle"> Motorcycle</label>
+    <label><input type="checkbox" value="Benny's vehicle"> Benny's vehicle</label>
+    <label><input type="checkbox" value="Culture vehicle"> Culture vehicle</label>
+    <label><input type="checkbox" value="Pegasus plane"> Pegasus plane</label>
+    <label><input type="checkbox" value="Railgun"> Railgun</label>
+    <label><input type="checkbox" value="RPG"> RPG</label>
+    <label><input type="checkbox" value="1 of every weapon type"> 1 of every weapon type</label>
+    <label><input type="checkbox" value="Smart outfit"> Smart outfit</label>
+    <label><input type="checkbox" value="Beach outfit"> Beach outfit</label>
+    <label><input type="checkbox" value="Casual outfit"> Casual outfit</label>
+    <label><input type="checkbox" value="Military style outfit"> Military style outfit</label>
+    <label><input type="checkbox" value="Culture outfit"> Culture outfit</label>
+  </div>
+  <div class="controls" style="margin-top:8px">
+    <button id="gta-checklist-save">Save Checklist</button>
+    <button id="gta-checklist-load">Load Checklist</button>
+  </div>
+</div>
 
     <!-- Car Database -->
     <div id="gta-car-db" style="display:block;margin-top:16px">
@@ -245,7 +290,33 @@ document.getElementById('cd-stop').addEventListener('click', ()=>{ if(cdInterval
 document.getElementById('cd-reset').addEventListener('click', ()=>{ clearInterval(cdInterval); cdInterval=null; cdSeconds = 15*60; displayCountdown(); });
 
 // ---------------- Car Database ----------------
-let cars = [ {name:"Pariah", carClass:"Sports", tier:"S", topSpeed:136, img:"https://via.placeholder.com/320x180?text=Pariah"}, {name:"Itali RSX", carClass:"Super", tier:"S", topSpeed:135, img:"https://via.placeholder.com/320x180?text=Itali+RSX"}, {name:"Jester RR", carClass:"Sports", tier:"B", topSpeed:125, img:"https://via.placeholder.com/320x180?text=Jester+RR"}, {name:"Comet SR", carClass:"Sports", tier:"B", topSpeed:123, img:"https://via.placeholder.com/320x180?text=Comet+SR"}, {name:"Buffalo STX", carClass:"Muscle", tier:"A", topSpeed:126, img:"https://via.placeholder.com/320x180?text=Buffalo+STX"}, {name:"Zentorno", carClass:"Super", tier:"A", topSpeed:128, img:"https://via.placeholder.com/320x180?text=Zentorno"} ];
+let cars = [
+  {
+    name: "Banshee GTS (HSW)",
+    carClass: "Sports",
+    tier: "S",
+    topSpeed: 172,
+    img: "https://via.placeholder.com/320x180?text=Pariah"
+  },
+];
+
+const gtaChecklistItems = document.querySelectorAll('#gta-checklist input[type=checkbox]');
+  document.getElementById('gta-checklist-save').addEventListener('click', ()=>{
+    const saveState = {};
+    gtaChecklistItems.forEach(cb => saveState[cb.value] = cb.checked);
+    localStorage.setItem('gta_checklist', JSON.stringify(saveState));
+    document.getElementById('gta-random-output').textContent = 'Checklist saved.';
+  });
+  document.getElementById('gta-checklist-load').addEventListener('click', ()=>{
+    const raw = localStorage.getItem('gta_checklist');
+    if(!raw){
+      document.getElementById('gta-random-output').textContent = 'No saved checklist found.';
+      return;
+    }
+    const state = JSON.parse(raw);
+    gtaChecklistItems.forEach(cb => cb.checked = !!state[cb.value]);
+    document.getElementById('gta-random-output').textContent = 'Checklist loaded.';
+  });
 
 const carGrid = document.getElementById('car-grid');
 function renderCars(list){ carGrid.innerHTML = ''; if(list.length===0){ carGrid.innerHTML = '<div class="muted">No cars match the filters.</div>'; return; } for(const c of list){ const el = document.createElement('div'); el.className='car-card'; el.innerHTML = `<img src="${c.img}" alt="${c.name}"><div class="car-name">${c.name}</div><div class="car-meta">${c.carClass} · Tier ${c.tier}<br>Top Speed: ${c.topSpeed} mph</div>`; carGrid.appendChild(el); } }
