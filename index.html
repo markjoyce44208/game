@@ -206,9 +206,167 @@
 
 <script>
 // ---------------- GT7 ----------------
-const gt7Tracks = ["Trial Mountain","Deep Forest Raceway","High Speed Ring","Suzuka Circuit","Tokyo Expressway","Autopolis","Dragon Trail"];
+const gt7Tracks = [
+  // 24 Heures du Mans (Circuit de la Sarthe)
+  '24 Heures du Mans Full Course',
+  '24 Heures du Mans No Chicane',
+
+  // Alsace (Original)
+  'Alsace Test Course',
+  'Alsace Test Course Reverse',
+  'Alsace Village',
+  'Alsace Village Reverse',
+
+  // Autodromo Lago Maggiore (Original)
+  'Autodrome Lago Maggiore Centre',
+  'Autodrome Lago Maggiore Centre Reverse',
+  'Autodrome Lago Maggiore East',
+  'Autodrome Lago Maggiore East Reverse',
+  'Autodrome Lago Maggiore East End',
+  'Autodrome Lago Maggiore East End Reverse',
+  'Autodrome Lago Maggiore Full Course',
+  'Autodrome Lago Maggiore Full Course Reverse',
+  'Autodrome Lago Maggiore West',
+  'Autodrome Lago Maggiore West Reverse',
+  'Autodrome Lago Maggiore West End',
+  'Autodrome Lago Maggiore West End Reverse',
+
+  // Autopolis (Real-world)
+  'Autopolis International Racing Course',
+  'Autopolis Shortcut',
+
+  // Barcelona-Catalunya (Real-world)
+  'Circuit de Barcelona-Catalunya GP',
+  'Circuit de Barcelona-Catalunya GP No Chicane',
+  'Circuit de Barcelona-Catalunya National',
+
+  // Blue Moon Bay Speedway (Original)
+  'Blue Moon Bay Speedway',
+  'Blue Moon Bay Speedway Infield A',
+  'Blue Moon Bay Speedway Infield A Reverse',
+  'Blue Moon Bay Speedway Infield B',
+  'Blue Moon Bay Speedway Infield B Reverse',
+  'Blue Moon Bay Speedway Reverse',
+
+  // Brands Hatch (Real-world)
+  'Brands Hatch GP',
+  'Brands Hatch Indy',
+
+  // Broad Bean Raceway (Original)
+  'Broad Bean Raceway',
+  'Broad Bean Raceway Reverse',
+
+  // Deep Forest (Original)
+  'Deep Forest',
+  'Deep Forest Reverse',
+
+  // Dragon Trail (Original)
+  'Dragon Trail Gardens',
+  'Dragon Trail Gardens Reverse',
+  'Dragon Trail Seaside',
+  'Dragon Trail Seaside Reverse',
+
+  // Daytona (Real-world)
+  'Daytona Tri-Oval',
+  'Daytona Road Course',
+
+  // Fuji Speedway (Real-world)
+  'Fuji International Speedway',
+  'Fuji International Speedway Short',
+
+  // Goodwood (Real-world)
+  'Goodwood Motor Circuit',
+
+  // High Speed Ring (Original)
+  'High Speed Ring',
+  'High Speed Ring Reverse',
+
+  // Interlagos (Real-world)
+  'Autódromo de Interlagos',
+
+  // Kyoto Driving Park (Original)
+  'Kyoto Driving Park Miyabi',
+  'Kyoto Driving Park Yamagiwa',
+  'Kyoto Driving Park Yamagiwa + Miyabi',
+  'Kyoto Driving Park Yamagiwa + Miyabi Reverse',
+  'Kyoto Driving Park Yamagiwa Reverse',
+
+  // Laguna Seca (Real-world)
+  'WeatherTech Raceway Laguna Seca',
+
+  // Monza (Real-world)
+  'Autodromo Nazionale Monza',
+  'Autodromo Nazionale Monza No Chicane',
+
+  // Mount Panorama (Real-world)
+  'Mount Panorama',
+
+  // Nürburgring (Real-world)
+  'Nürburgring Endurance',
+  'Nürburgring GP',
+  'Nürburgring Short',
+  'Nürburgring Sprint',
+
+  // Northern Isle Speedway (Original)
+  'Northern Isle Speedway',
+  'Northern Isle Speedway Infield',
+
+  // Red Bull Ring (Real-world)
+  'Red Bull Ring',
+  'Red Bull Ring Short',
+
+  // Road Atlanta (Real-world)
+  'Road Atlanta',
+
+  // Sardegna Road Track (Original)
+  'Sardegna Road Track A',
+  'Sardegna Road Track A Reverse',
+  'Sardegna Road Track B',
+  'Sardegna Road Track B Reverse',
+  'Sardegna Road Track C',
+  'Sardegna Road Track C Reverse',
+
+  // Sainte-Croix (Original)
+  'Sainte-Croix A',
+  'Sainte-Croix A Reverse',
+  'Sainte-Croix B',
+  'Sainte-Croix B Reverse',
+  'Sainte-Croix C',
+  'Sainte-Croix C Reverse',
+
+  // Spa-Francorchamps (Real-world)
+  'Spa-Francorchamps',
+  'Spa-Francorchamps 24h Layout',
+
+  // Suzuka (Real-world)
+  'Suzuka',
+  'Suzuka East',
+
+  // Tokyo Expressway (Original)
+  'Tokyo Expressway Central Clockwise',
+  'Tokyo Expressway Central Counterclockwise',
+  'Tokyo Expressway East Clockwise',
+  'Tokyo Expressway East Counterclockwise',
+  'Tokyo Expressway South Clockwise',
+  'Tokyo Expressway South Counterclockwise',
+
+  // Trial Mountain (Original)
+  'Trial Mountain',
+  'Trial Mountain Reverse',
+
+  // Tsukuba (Real-world)
+  'Tsukuba',
+
+  // Watkins Glen (Real-world)
+  'Watkins Glen Long Course',
+  'Watkins Glen Short Course',
+
+  //  Add Special Stage Route X (Original)
+  'Special Stage Route X',
+];
+
 const gt7Drive = ["Front Engine","Mid Engine","Rear Engine","FWD","RWD","AWD"];
-const gt7Countries = ["Japan","USA","Germany","Italy","UK","France"];
+const gt7Countries = ["Asia","North America","Europe"];
 
 // elements
 const p2wEl = document.getElementById('p2w');
@@ -264,8 +422,8 @@ document.getElementById('gt7-load-btn').addEventListener('click', ()=>{
 });
 
 // ---------------- GTA ----------------
-const gtaMinigames = ["Pistol Deathmatch","Races","Capture","LTS","VIP Work","Street Race"];
-const gtaLocations = {"City":["Vinewood","Del Perro","City Hall","Mirror Park"],"Desert":["Sandy Shores","Grapeseed","Zancudo"],"Coast":["Vespucci Beach","La Puerta","Paleto Bay"]};
+const gtaMinigames = ["Boopy Gun","Relay","Capture the Car","Plane Missile","VIP Game","Car Missile", "Hide and Sneek", "Protect the Faggio", "Brioso Football", "Tanker"];
+const gtaLocations = {"City":[" ","Del Perro Pier","Airport Car Park","Maze Bank Tower","LS Car Meet","Casino","Golf Course","Grove Street","Burton LS Customs", "Airport LS Customs", "La Mesa LS Customs", "Red Car Park", "Arena Car Park", "Docks", "Simeon's Dealership", "Helipad"],"Desert":["Power Station","Quarry","MotoX Circuit","Meth Lab", "Cocaine Lockup", "Sandy Shores Airfield", "McKenzie Field", "Weed Farm", "Sandy Shores LS Customs", "Beeker's Garage","Plaeto Forest Log Cabins","Zancudo Ammu-Nation","Airplane Graveyard", "Sandy Shores Bar", "Humane Labs"]};
 
 // Random minigame
 document.getElementById('gta-minigame-btn').addEventListener('click', ()=>{ const m = gtaMinigames[Math.floor(Math.random()*gtaMinigames.length)]; document.getElementById('gta-random-output').textContent = `Minigame: ${m}`; });
@@ -352,3 +510,4 @@ document.getElementById('fh5-startend-btn').addEventListener('click', ()=>{ cons
 </script>
 </body>
 </html>
+
